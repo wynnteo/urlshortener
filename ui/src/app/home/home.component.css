@@ -1,0 +1,41 @@
+
+#logo {
+    font-size: 50px;
+    font-weight: 700;
+    line-height: 1.4;
+    padding: 20px;
+}
+
+::ng-deep .mat-form-field-label {
+    color: rgb(145 145 145 / 70%) ;
+}
+
+.mat-form-field {
+    width: 100%;
+}
+
+.shorten_results {
+    list-style: none;
+    margin: 0;
+    padding: 30px;
+    margin-top: 20px;
+    background-color: #fff;
+    border-radius: 8px 8px 8px 8px;
+    width: 800px;
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+button {
+    margin-left: 10px;
+    margin-bottom: 15px;
+}
+
+::ng-deep .red-snackbar{
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}

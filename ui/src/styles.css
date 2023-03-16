@@ -1,0 +1,68 @@
+/* You can add global styles to this file, and also import other style files */
+html, body {
+    height: 100%;
+  }
+  
+a {
+    text-decoration: none;
+    cursor: pointer;
+    color: #0236b9;
+}
+
+body {
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 10px);
+  }
+  
+form {
+    display: flex;
+    align-items: center;
+    width: 860px;
+}
+  
+.mat-form-field-appearance-outline .mat-form-field-outline {
+    color: rgb(101 7 7)
+}
+
+.mat-flat-button.mat-accent, .mat-raised-button.mat-accent, .mat-fab.mat-accent, .mat-mini-fab.mat-accent {
+    background-color:#c2185b;
+}
+
+.mat-flat-button.mat-accent, .mat-raised-button.mat-accent, .mat-fab.mat-accent, .mat-mini-fab.mat-accent {
+    color: #fff;
+}
+
+.short-link {
+    
+    padding-right: 25px;
+}
+
+.button {
+    border-radius: 6px;
+    color: #fff;
+    outline: none !important;
+    padding: 0.6em 1em;
+    border: 0px;
+    cursor: pointer;
+}
+
+.button-sec {
+    font-size: 16px;
+    position: relative;
+    padding-left: 20px;
+    padding-right: 20px;
+    background: #edf2fe;
+    color: #2a5bd7;
+    border-radius: 6px;
+}
+

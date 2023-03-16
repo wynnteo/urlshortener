@@ -1,0 +1,43 @@
+version: '3.2'
+services: 
+  mysql:
+    build: ./db
+    restart: always
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=urlshortener
+  ui: 
+    build: ./ui
+    restart: on-failure
+    container_name: ui
+    ports: 
+      - "4200:4200"
+  api: 
+    build: ./api
+    restart: always
+    container_name: api
+    ports: 
+      - "3000:3000"
+    depends_on:
+      - mysql
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_NAME=urlshortener
+  nginx: 
+    build: ./nginx
+    restart: always
+    container_name: nginx
+    depends_on: 
+      - ui
+      - api
+    ports: 
+      - "80:80"
+volumes:
+  db_data:
