@@ -6,7 +6,7 @@ import { map, tap } from 'rxjs/operators';
     providedIn: 'root',
 })
 export class MainService {
-    private static MAIN_SERVICE_URL = 'http://localhost:3000/api';
+    private static MAIN_SERVICE_URL = '/api';
 
     constructor(private http: HttpClient) {
 
