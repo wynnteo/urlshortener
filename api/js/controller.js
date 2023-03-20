@@ -1,5 +1,6 @@
 const db = require("../db/connection");
 const winston = require("winston");
+const url = require('url');
 
 const logger = winston.createLogger({
   level: "info",
@@ -26,8 +27,15 @@ exports.createShortenedURL = async (req, res) => {
   try {
     const org_url = req.body.url;
     if (!org_url) {
-      logger.error("Missing URL parameter.");
-      return res.status(400).json({ error: "Missing URL parameter" });
+      logger.error("URL is required.");
+      return res.status(400).json({ status: "failed", error: "URL is required." });
+    }
+
+    // Validate URL
+    const parsedUrl = url.parse(org_url);
+    if (!parsedUrl.protocol || !parsedUrl.hostname) {
+      logger.error("Invalid URL format.");
+      return res.status(400).json({ status: "failed", error: "Invalid URL format." });
     }
       
     // Check if the url has shortened before, if yes return the value.
@@ -87,7 +95,7 @@ exports.getShortenedURL = (req, res) => {
       logger.info(`Shortened URL ${url} not found`);
       return res.status(404).send({
         status: "failed",
-        error: "Shortened URL not found",
+        error: "The requested URL does not exist.",
       });
     });
   } catch (error) {

@@ -24,7 +24,6 @@ export class AppComponent {
             }
           },
           error: (err: any) => {
-            console.log(err);
             let msg = "An unknown error occurred.";
             if (err.status === 404) {
               msg = "The requested URL does not exist.";

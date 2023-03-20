@@ -37,7 +37,7 @@ export class HomeComponent implements OnInit {
     }
 
     if (this.shortenForm.invalid && this.shortenForm.controls['enteredURL']?.errors?.['pattern']) {
-      this.snackBar.open('Invalid URL.', 'Dismiss', {
+      this.snackBar.open('Invalid URL format.', 'Dismiss', {
         duration: 3000,
         verticalPosition: 'top',
         horizontalPosition: 'right',
@@ -58,8 +58,8 @@ export class HomeComponent implements OnInit {
         error: (err: any) => {
           this.result = {};
           let msg = "An unknown error occurred.";
-          if (err.status === 400) {
-            msg = "The URL parameter is required.";
+          if (err.status === 400 && err.error.msg) {
+            msg =  && err.error.msg;
           } else if (err.status === 500) {
             msg = "An error occurred on the server.";
           }

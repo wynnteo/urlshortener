@@ -15,14 +15,14 @@ describe("Shortened URL API", () => {
     it("returns a shortened URL for a valid URL if exist, if not found insert a new one.", async () => {
       const res1 = await request(app)
         .post("/api/shorten")
-        .send({ url: "www.google.com" })
-        .expect(200);
+        .send({ url: "http://www.testurl.com" })
+        .expect(201);
       expect(res1.body.status).toBe("success");
       expect(res1.body.data).toBeDefined();
 
       const res2 = await request(app)
         .post("/api/shorten")
-        .send({ url: "www.google.com" })
+        .send({ url: "http://www.testurl.com" })
         .expect(200);
       expect(res2.body.status).toBe("success");
       expect(res2.body.data).toBeDefined();
@@ -31,7 +31,15 @@ describe("Shortened URL API", () => {
 
     it("returns an error for a missing URL parameter", async () => {
       const res = await request(app).post("/api/shorten").expect(400);
-      expect(res.body.error).toBe("Missing URL parameter");
+      expect(res.body.error).toBe("URL is required.");
+    });
+
+    it("returns an error for an invalid URL parameter", async () => {
+      const res = await request(app)
+        .post("/api/shorten")
+        .send({ url: "www.hi" })
+        .expect(400);
+      expect(res.body.error).toBe("Invalid URL format.");
     });
   });
 
@@ -56,7 +64,7 @@ describe("Shortened URL API", () => {
       const res = await request(app)
         .get("/api/invalid/getshortenurl")
         .expect(404);
-      expect(res.body.error).toBe("Shortened URL not found");
+      expect(res.body.error).toBe("The requested URL does not exist.");
     });
   });
 });
