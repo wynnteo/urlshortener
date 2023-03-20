@@ -30,6 +30,10 @@ app.use(
 );
 
 app.use("/api", require("./routes"));
+// route not found middleware
+app.use((req, res, next) => {
+  res.status(404).send({ status: "failed", error: "Invalid api." });
+});
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;

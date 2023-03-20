@@ -24,9 +24,16 @@ export class AppComponent {
             }
           },
           error: (err: any) => {
-            console.error(err);
+            console.log(err);
+            let msg = "An unknown error occurred.";
+            if (err.status === 404) {
+              msg = "The requested URL does not exist.";
+            } else if (err.status=== 500) {
+              msg = "An error occurred on the server.";
+            }
+
             this.router.navigate(['/']);
-            this.snackBar.open("Invalid URL", "Dismiss", {
+            this.snackBar.open(msg, "Dismiss", {
               duration: 3000,
               verticalPosition: 'top',
               horizontalPosition: 'right',

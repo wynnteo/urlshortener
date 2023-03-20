@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MainService } from '../services/main.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
@@ -11,36 +12,63 @@ import { Clipboard } from '@angular/cdk/clipboard';
 })
 export class HomeComponent implements OnInit {
 
-  enteredURL: string = "";
+  shortenForm!: FormGroup ;
   result: any =  null;
   btn_text: string = "Copy";
 
-  constructor(private route:ActivatedRoute, private api:MainService, private snackBar: MatSnackBar, private clipboard: Clipboard) { }
+  constructor(private fb: FormBuilder, private route:ActivatedRoute, private api:MainService, private snackBar: MatSnackBar, private clipboard: Clipboard) { }
 
   ngOnInit(): void {
-    
+    this.shortenForm = this.fb.group({
+      enteredURL: new FormControl('', [Validators.required, Validators.pattern('^(http|https)://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(/\S*)?$')])
+    });
   }
 
   // User click `GO` button to shorten an URL
   shortenurl() {
-    this.api.createShortenURL({url:this.enteredURL}).subscribe(
+    if (this.shortenForm.invalid && this.shortenForm.controls['enteredURL']?.errors?.['required']) {
+      this.snackBar.open('URL is required', 'Dismiss', {
+        duration: 3000,
+        verticalPosition: 'top',
+        horizontalPosition: 'right',
+        panelClass: ['red-snackbar']
+      });
+      return;
+    }
+
+    if (this.shortenForm.invalid && this.shortenForm.controls['enteredURL']?.errors?.['pattern']) {
+      this.snackBar.open('Invalid URL.', 'Dismiss', {
+        duration: 3000,
+        verticalPosition: 'top',
+        horizontalPosition: 'right',
+        panelClass: ['red-snackbar']
+      });
+      return;
+    }
+    const enteredUrl = this.shortenForm.get('enteredURL')?.value;
+    this.api.createShortenURL({url: enteredUrl}).subscribe(
       {
         next: (resp: any) => {
           this.result = {
-            org_url: this.enteredURL,
+            org_url: enteredUrl,
             new_url: "http://" + window.location.hostname + "/" +resp.data
           }
           this.btn_text = "Copy";
         },
         error: (err: any) => {
           this.result = {};
-          console.error(err);
-            this.snackBar.open("Request error, please try again!", "Dismiss", {
-              duration: 3000,
-              verticalPosition: 'top',
-              horizontalPosition: 'right',
-              panelClass: ['red-snackbar']
-           });
+          let msg = "An unknown error occurred.";
+          if (err.status === 400) {
+            msg = "The URL parameter is required.";
+          } else if (err.status === 500) {
+            msg = "An error occurred on the server.";
+          }
+          this.snackBar.open(msg, "Dismiss", {
+            duration: 3000,
+            verticalPosition: 'top',
+            horizontalPosition: 'right',
+            panelClass: ['red-snackbar']
+         });
         }
       }
     )
