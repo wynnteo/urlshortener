@@ -12,13 +12,21 @@ describe("Shortened URL API", () => {
   });
 
   describe("POST /api/shorten", () => {
-    it("returns a shortened URL for a valid URL", async () => {
-      const res = await request(app)
+    it("returns a shortened URL for a valid URL if exist, if not found insert a new one.", async () => {
+      const res1 = await request(app)
         .post("/api/shorten")
         .send({ url: "www.google.com" })
         .expect(200);
-      expect(res.body.status).toBe("success");
-      expect(res.body.data).toBeDefined();
+      expect(res1.body.status).toBe("success");
+      expect(res1.body.data).toBeDefined();
+
+      const res2 = await request(app)
+        .post("/api/shorten")
+        .send({ url: "www.google.com" })
+        .expect(200);
+      expect(res2.body.status).toBe("success");
+      expect(res2.body.data).toBeDefined();
+      expect(res2.body.data.shortened_url).toBe(res1.body.data.shortened_url);
     });
 
     it("returns an error for a missing URL parameter", async () => {
@@ -26,6 +34,7 @@ describe("Shortened URL API", () => {
       expect(res.body.error).toBe("Missing URL parameter");
     });
   });
+
 
   describe("GET /api/:url/getshortenurl", () => {
     it("returns the original URL for a valid shortened URL", async () => {
