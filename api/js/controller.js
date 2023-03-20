@@ -39,27 +39,46 @@ exports.createShortenedURL = async (req, res) => {
     }
       
     // Check if the url has shortened before, if yes return the value.
-    const obj = await checkIfExist("org_url", org_url);
-    if (obj.length > 0) {
+    let obj;
+    try {
+      obj = await checkIfExist("org_url", org_url);
       logger.info(`Returning shortened URL for ${org_url}`);
       return res
         .status(200)
         .send({ status: "success", data: obj[0].shortened_url });
-    } 
+    } catch (err) {
+      logger.error(`Error while calling checkIfExist : ${err}`);
+      return res.status(500).json({ status: "failed", error: "Error while checking if URL already exists" });
+    }
 
     // Else generate a 7 char shortened url, and check if exist in db.
     let shortened_url = "";
     let cond = true;
     do {
       shortened_url = generateShortId();
-      const ifIdExist = await checkIfExist("shortened_url", shortened_url);
+
+      let ifIdExist;
+      try {
+        ifIdExist = await checkIfExist("shortened_url", shortened_url);
+      } catch (err) {
+        logger.error(`Error while calling checkIfExist in do while : ${err}`);
+        return res.status(500).json({ status: "failed", error: "Error while checking if short URL already exists" });
+      }
+
       if (ifIdExist.length === 0) {
         cond = false;
       }
     } while (cond);
 
     // Insert the shortened url to db
-    const result = await insertShortenUrls(org_url, shortened_url);
+    let result;
+    try {
+      result = await insertShortenUrls(org_url, shortened_url);
+    } catch (err) {
+      logger.error(`Error while calling insertShortenUrls : ${err}`);
+      return res.status(500).json({ status: "failed", error: "Error while inserting shortened URL" });
+    }
+
     logger.info(`Inserted new shortened URL for ${org_url}`);
     logger.info(result);
     return res.status(201).send({ status: "success", data: shortened_url });
