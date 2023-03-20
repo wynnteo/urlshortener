@@ -58,8 +58,8 @@ export class HomeComponent implements OnInit {
         error: (err: any) => {
           this.result = {};
           let msg = "An unknown error occurred.";
-          if (err.status === 400 && err.error.msg) {
-            msg =  && err.error.msg;
+          if (err.error.msg && err.status === 400) {
+            msg = err.error.msg;
           } else if (err.status === 500) {
             msg = "An error occurred on the server.";
           }
